@@ -14,24 +14,30 @@ import Category from "@/models/Category";
 
 async function getFeaturedProducts() {
   await connectDB();
-  return Product.find({ isActive: true, isFeatured: true })
+  const products = await Product.find({ isActive: true, isFeatured: true })
     .populate("category", "name slug")
     .limit(8)
     .lean();
+  return JSON.parse(JSON.stringify(products));
 }
 
 async function getCategories() {
   await connectDB();
-  return Category.find({ isActive: true }).sort({ order: 1 }).limit(6).lean();
+  const categories = await Category.find({ isActive: true })
+    .sort({ order: 1 })
+    .limit(6)
+    .lean();
+  return JSON.parse(JSON.stringify(categories));
 }
 
 async function getNewArrivals() {
   await connectDB();
-  return Product.find({ isActive: true })
+  const products = await Product.find({ isActive: true })
     .populate("category", "name slug")
     .sort({ createdAt: -1 })
     .limit(4)
     .lean();
+  return JSON.parse(JSON.stringify(products));
 }
 
 export default async function HomePage() {
