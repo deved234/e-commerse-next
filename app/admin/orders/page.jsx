@@ -4,7 +4,7 @@ import AdminOrdersClient from "@/components/admin/AdminOrdersClient";
 
 export default async function AdminOrdersPage() {
   await connectDB();
-  const orders = await Order.find().sort({ createdAt: -1 }).lean();
+  const orders = await Order.find().sort({ createdAt: -1 }).lean() .then((docs) => JSON.parse(JSON.stringify(docs)));
 
   return (
     <div className="text-white space-y-6">

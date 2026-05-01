@@ -8,7 +8,8 @@ export default async function AdminProductsPage() {
     .populate("category", "name")
     .populate("seller", "name")
     .sort({ createdAt: -1 })
-    .lean();
+    .lean()
+    .then((docs) => JSON.parse(JSON.stringify(docs)));
 
   return (
     <div className="text-white space-y-6">

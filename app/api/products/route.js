@@ -81,7 +81,7 @@ export async function POST(req) {
         await connectDB();
         const body = await req.json();
 
-        const slug = generateSlug(body.name);
+        const slug = `${generateSlug(body.name)}-${Date.now()}`;
 
         const product = await Product.create({
             ...body,

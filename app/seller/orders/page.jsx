@@ -27,7 +27,9 @@ export default async function SellerOrdersPage() {
     "items.product": { $in: sellerProductIds },
   })
     .sort({ createdAt: -1 })
-    .lean();
+    .lean()
+
+    .then((docs) => JSON.parse(JSON.stringify(docs)));
 
   return (
     <div className="text-white space-y-6">

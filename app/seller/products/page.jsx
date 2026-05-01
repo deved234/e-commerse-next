@@ -12,7 +12,8 @@ export default async function SellerProductsPage() {
   const products = await Product.find({ seller: session.user.id })
     .populate("category", "name")
     .sort({ createdAt: -1 })
-    .lean();
+    .lean()
+    .then((docs) => JSON.parse(JSON.stringify(docs)));
 
   return (
     <div className="text-white space-y-6">

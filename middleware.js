@@ -1,33 +1,34 @@
-import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
 
-export default auth((req) => {
+export async function middleware(req) {
     const { pathname } = req.nextUrl;
-    const session = req.auth;
 
-    // حماية Admin routes
+    const token = await getToken({
+        req,
+        secret: process.env.AUTH_SECRET
+    });
+
     if (pathname.startsWith("/admin")) {
-        if (!session || session.user.role !== "admin") {
+        if (!token || token.role !== "admin") {
             return NextResponse.redirect(new URL("/login", req.url));
         }
     }
 
-    // حماية Seller routes
     if (pathname.startsWith("/seller")) {
-        if (!session || !["seller", "admin"].includes(session.user.role)) {
+        if (!token || !["seller", "admin"].includes(token.role)) {
             return NextResponse.redirect(new URL("/login", req.url));
         }
     }
 
-    // حماية Profile/Orders/Wishlist
     if (["/profile", "/orders", "/wishlist", "/checkout"].some(p => pathname.startsWith(p))) {
-        if (!session) {
+        if (!token) {
             return NextResponse.redirect(new URL("/login", req.url));
         }
     }
 
     return NextResponse.next();
-});
+}
 
 export const config = {
     matcher: [

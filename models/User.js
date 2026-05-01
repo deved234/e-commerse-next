@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
 
 const addressSchema = new mongoose.Schema({
     label: { type: String, default: "Home" },
@@ -17,8 +16,6 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: [true, "Name is required"],
             trim: true,
-            minlength: 2,
-            maxlength: 50,
         },
         email: {
             type: String,
@@ -27,19 +24,9 @@ const userSchema = new mongoose.Schema(
             lowercase: true,
             trim: true,
         },
-        phone: {
-            type: String,
-            trim: true,
-        },
-        password: {
-            type: String,
-            minlength: 6,
-            select: false,
-        },
-        avatar: {
-            type: String,
-            default: "",
-        },
+        phone: { type: String, trim: true },
+        password: { type: String, select: false },
+        avatar: { type: String, default: "" },
         role: {
             type: String,
             enum: ["customer", "seller", "admin"],
@@ -51,22 +38,12 @@ const userSchema = new mongoose.Schema(
         emailVerificationExpires: Date,
         resetPasswordToken: String,
         resetPasswordExpires: Date,
-        isActive: { type: Boolean, default: true },  // للـ soft delete
+        isActive: { type: Boolean, default: true },
         googleId: String,
         stripeCustomerId: String,
     },
     { timestamps: true }
 );
 
-// Hash password قبل الحفظ
-userSchema.pre("save", async function (next) {
-    if (!this.isModified("password") || !this.password) return next();
-    this.password = await bcrypt.hash(this.password, 12);
-    next();
-});
-
-userSchema.methods.comparePassword = async function (candidatePassword) {
-    return bcrypt.compare(candidatePassword, this.password);
-};
-
-export default mongoose.models.User || mongoose.model("User", userSchema);
+const User = mongoose.models.User || mongoose.model("User", userSchema);
+export default User;

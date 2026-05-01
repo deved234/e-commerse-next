@@ -7,7 +7,8 @@ export default async function AdminUsersPage() {
   const users = await User.find()
     .select("-password -emailVerificationToken -resetPasswordToken")
     .sort({ createdAt: -1 })
-    .lean();
+    .lean()
+    .then((docs) => JSON.parse(JSON.stringify(docs)));
 
   return (
     <div className="text-white space-y-6">
