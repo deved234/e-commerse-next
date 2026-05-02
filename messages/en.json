@@ -1,0 +1,76 @@
+{
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "cart": "Cart",
+    "wishlist": "Wishlist",
+    "profile": "Profile",
+    "orders": "My Orders",
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "adminPanel": "Admin Panel",
+    "sellerDashboard": "Seller Dashboard"
+  },
+  "home": {
+    "hero": {
+      "badge": "New Arrivals Every Week",
+      "title": "Shop Smarter Live Better",
+      "description": "Discover thousands of products at unbeatable prices.",
+      "shopNow": "Shop Now",
+      "viewFeatured": "View Featured"
+    },
+    "sections": {
+      "categories": "Shop by Category",
+      "featured": "Featured Products",
+      "newArrivals": "New Arrivals"
+    }
+  },
+  "product": {
+    "addToCart": "Add to Cart",
+    "outOfStock": "Out of Stock",
+    "inStock": "In Stock",
+    "reviews": "Customer Reviews",
+    "related": "Related Products"
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "empty": "Your cart is empty",
+    "clearAll": "Clear All",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "total": "Total",
+    "checkout": "Proceed to Checkout",
+    "continueShopping": "Continue Shopping",
+    "promoCode": "Promo Code",
+    "apply": "Apply",
+    "free": "FREE"
+  },
+  "auth": {
+    "login": "Welcome back",
+    "loginSub": "Sign in to your account",
+    "register": "Create account",
+    "registerSub": "Join ShopZone today",
+    "email": "Email",
+    "password": "Password",
+    "name": "Full Name",
+    "phone": "Phone",
+    "signIn": "Sign In",
+    "signUp": "Create Account",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "orContinueWith": "OR",
+    "continueWithGoogle": "Continue with Google"
+  },
+  "common": {
+    "save": "Save Changes",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "filter": "Filters",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "success": "Success!"
+  }
+}

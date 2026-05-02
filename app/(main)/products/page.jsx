@@ -1,3 +1,4 @@
+
 import { Suspense } from "react";
 import ProductsClient from "@/components/product/ProductsClient";
 

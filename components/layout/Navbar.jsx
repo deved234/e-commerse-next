@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { useCart } from "@/hooks/useCart";
 import { useWishlist } from "@/hooks/useWishlist";
+import { useTranslation } from "@/lib/TranslationContext";
+import LanguageSwitcher from "@/components/shared/LanguageSwitcher";
 import {
   ShoppingCart,
   Heart,
@@ -15,7 +17,6 @@ import {
   X,
   Package,
   LogOut,
-  Settings,
   LayoutDashboard,
   Store,
   ChevronDown,
@@ -25,33 +26,36 @@ export default function Navbar() {
   const { data: session } = useSession();
   const { totalItems, toggleCart } = useCart();
   const { totalItems: wishlistCount } = useWishlist();
+  const { t, locale } = useTranslation();
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/products", label: "Products" },
+    { href: "/", label: t("nav.home") },
+    { href: "/products", label: t("nav.products") },
   ];
 
   const userMenuItems = [
-    { href: "/profile", label: "My Profile", icon: User },
-    { href: "/orders", label: "My Orders", icon: Package },
-    { href: "/wishlist", label: "Wishlist", icon: Heart },
+    { href: "/profile", label: t("nav.profile"), icon: User },
+    { href: "/orders", label: t("nav.orders"), icon: Package },
+    { href: "/wishlist", label: t("nav.wishlist"), icon: Heart },
     ...(session?.user?.role === "admin"
-      ? [{ href: "/admin", label: "Admin Panel", icon: LayoutDashboard }]
+      ? [{ href: "/admin", label: t("nav.adminPanel"), icon: LayoutDashboard }]
       : []),
     ...(session?.user?.role === "seller"
-      ? [{ href: "/seller", label: "Seller Dashboard", icon: Store }]
+      ? [{ href: "/seller", label: t("nav.sellerDashboard"), icon: Store }]
       : []),
   ];
 
@@ -95,6 +99,9 @@ export default function Navbar() {
 
             {/* Right Actions */}
             <div className="flex items-center gap-2">
+              {/* Language Switcher */}
+              <LanguageSwitcher />
+
               {/* Search */}
               <button
                 onClick={() => setSearchOpen(true)}
@@ -109,7 +116,7 @@ export default function Navbar() {
                 className="relative p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800"
               >
                 <Heart className="w-5 h-5" />
-                {wishlistCount > 0 && (
+                {mounted && wishlistCount > 0 && (
                   <span className="absolute -top-1 -right-1 w-4 h-4 bg-rose-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
                     {wishlistCount}
                   </span>
@@ -122,7 +129,7 @@ export default function Navbar() {
                 className="relative p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800"
               >
                 <ShoppingCart className="w-5 h-5" />
-                {totalItems > 0 && (
+                {mounted && totalItems > 0 && (
                   <span className="absolute -top-1 -right-1 w-4 h-4 bg-amber-400 text-slate-900 text-xs rounded-full flex items-center justify-center font-bold">
                     {totalItems}
                   </span>
@@ -176,7 +183,7 @@ export default function Navbar() {
                             className="flex items-center gap-3 px-4 py-2.5 text-rose-400 hover:text-rose-300 hover:bg-slate-700 transition-colors text-sm w-full"
                           >
                             <LogOut className="w-4 h-4" />
-                            Sign Out
+                            {t("nav.signOut")}
                           </button>
                         </div>
                       </div>
@@ -188,7 +195,7 @@ export default function Navbar() {
                   href="/login"
                   className="hidden md:flex items-center gap-2 px-4 py-2 bg-amber-400 hover:bg-amber-300 text-slate-900 font-semibold text-sm rounded-lg transition-colors"
                 >
-                  Sign In
+                  {t("nav.signIn")}
                 </Link>
               )}
 
@@ -231,7 +238,7 @@ export default function Navbar() {
                   onClick={() => setMobileOpen(false)}
                   className="block px-3 py-2 bg-amber-400 text-slate-900 font-semibold text-sm rounded-lg text-center mt-2"
                 >
-                  Sign In
+                  {t("nav.signIn")}
                 </Link>
               )}
             </div>
@@ -248,7 +255,7 @@ export default function Navbar() {
               <input
                 autoFocus
                 type="text"
-                placeholder="Search products..."
+                placeholder={t("common.search")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => {
@@ -272,11 +279,7 @@ export default function Navbar() {
               <kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-slate-300 text-xs">
                 Enter
               </kbd>{" "}
-              to search or{" "}
-              <kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-slate-300 text-xs">
-                Esc
-              </kbd>{" "}
-              to close
+              to search
             </div>
           </div>
         </div>

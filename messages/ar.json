@@ -1,0 +1,76 @@
+{
+  "nav": {
+    "home": "الرئيسية",
+    "products": "المنتجات",
+    "cart": "السلة",
+    "wishlist": "المفضلة",
+    "profile": "الملف الشخصي",
+    "orders": "طلباتي",
+    "signIn": "تسجيل الدخول",
+    "signOut": "تسجيل الخروج",
+    "adminPanel": "لوحة الإدارة",
+    "sellerDashboard": "لوحة البائع"
+  },
+  "home": {
+    "hero": {
+      "badge": "وصول منتجات جديدة كل أسبوع",
+      "title": "تسوق بذكاء عش بشكل أفضل",
+      "description": "اكتشف آلاف المنتجات بأسعار لا تُقاوم.",
+      "shopNow": "تسوق الآن",
+      "viewFeatured": "عرض المميزة"
+    },
+    "sections": {
+      "categories": "تسوق حسب الفئة",
+      "featured": "منتجات مميزة",
+      "newArrivals": "وصل حديثاً"
+    }
+  },
+  "product": {
+    "addToCart": "أضف للسلة",
+    "outOfStock": "غير متوفر",
+    "inStock": "متوفر",
+    "reviews": "آراء العملاء",
+    "related": "منتجات مشابهة"
+  },
+  "cart": {
+    "title": "سلة التسوق",
+    "empty": "سلتك فارغة",
+    "clearAll": "مسح الكل",
+    "subtotal": "المجموع",
+    "shipping": "الشحن",
+    "total": "الإجمالي",
+    "checkout": "إتمام الشراء",
+    "continueShopping": "مواصلة التسوق",
+    "promoCode": "كود الخصم",
+    "apply": "تطبيق",
+    "free": "مجاني"
+  },
+  "auth": {
+    "login": "مرحباً بعودتك",
+    "loginSub": "سجل دخولك لحسابك",
+    "register": "إنشاء حساب",
+    "registerSub": "انضم إلى ShopZone اليوم",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "name": "الاسم الكامل",
+    "phone": "رقم الهاتف",
+    "signIn": "تسجيل الدخول",
+    "signUp": "إنشاء حساب",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "noAccount": "ليس لديك حساب؟",
+    "haveAccount": "لديك حساب بالفعل؟",
+    "orContinueWith": "أو",
+    "continueWithGoogle": "المتابعة مع Google"
+  },
+  "common": {
+    "save": "حفظ التغييرات",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "search": "بحث",
+    "filter": "فلترة",
+    "loading": "جاري التحميل...",
+    "error": "حدث خطأ ما",
+    "success": "تم بنجاح!"
+  }
+}

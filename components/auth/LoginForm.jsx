@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useTranslation } from "@/lib/TranslationContext";
 import {
   Mail,
   Lock,
@@ -18,6 +19,7 @@ export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const verified = searchParams.get("verified");
+  const { t } = useTranslation();
   const [form, setForm] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -37,7 +39,7 @@ export default function LoginForm() {
     setLoading(false);
 
     if (res?.error) {
-      setError("Invalid email or password");
+      setError(t("auth.invalidCredentials"));
     } else {
       router.push("/");
       router.refresh();
@@ -48,8 +50,10 @@ export default function LoginForm() {
     <div className="w-full max-w-md">
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-white">Welcome back</h1>
-          <p className="text-slate-400 mt-1 text-sm">Sign in to your account</p>
+          <h1 className="text-2xl font-bold text-white">
+            {t("auth.welcomeBack")}
+          </h1>
+          <p className="text-slate-400 mt-1 text-sm">{t("auth.signInDesc")}</p>
         </div>
 
         {verified && (
@@ -69,7 +73,7 @@ export default function LoginForm() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="text-slate-300 text-sm font-medium block mb-1.5">
-              Email
+              {t("auth.email")}
             </label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
@@ -87,13 +91,13 @@ export default function LoginForm() {
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <label className="text-slate-300 text-sm font-medium">
-                Password
+                {t("auth.password")}
               </label>
               <Link
                 href="/forgot-password"
                 className="text-amber-400 hover:text-amber-300 text-xs transition-colors"
               >
-                Forgot password?
+                {t("auth.forgotPassword")}
               </Link>
             </div>
             <div className="relative">
@@ -126,13 +130,15 @@ export default function LoginForm() {
             className="w-full py-3 bg-amber-400 hover:bg-amber-300 disabled:opacity-60 text-slate-900 font-bold rounded-xl transition-colors flex items-center justify-center gap-2 mt-2"
           >
             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-            {loading ? "Signing in..." : "Sign In"}
+            {loading ? t("auth.signingIn") : t("auth.signIn")}
           </button>
         </form>
 
         <div className="flex items-center gap-3 my-6">
           <div className="flex-1 h-px bg-slate-800" />
-          <span className="text-slate-500 text-xs">OR</span>
+          <span className="text-slate-500 text-xs">
+            {t("auth.orContinueWith") || "OR"}
+          </span>
           <div className="flex-1 h-px bg-slate-800" />
         </div>
 
@@ -158,16 +164,16 @@ export default function LoginForm() {
               d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
             />
           </svg>
-          Continue with Google
+          {t("auth.googleBtn")}
         </button>
 
         <p className="text-center text-slate-400 text-sm mt-6">
-          Don't have an account?{" "}
+          {t("auth.noAccount")}{" "}
           <Link
             href="/register"
             className="text-amber-400 hover:text-amber-300 font-medium transition-colors"
           >
-            Sign up
+            {t("auth.signUp")}
           </Link>
         </p>
       </div>

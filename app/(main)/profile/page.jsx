@@ -1,4 +1,5 @@
 "use client";
+import { useTranslation } from "@/lib/TranslationContext";
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
@@ -22,6 +23,8 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", addresses: [] });
+  const { t } = useTranslation();
+
 
   useEffect(() => {
     if (!session) {
@@ -101,11 +104,11 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-slate-950 text-white">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-black">My Profile</h1>
+          <h1 className="text-3xl font-black">{t("profile.title")}</h1>
           {success && (
             <div className="flex items-center gap-2 text-emerald-400 text-sm font-medium">
               <CheckCircle className="w-4 h-4" />
-              Saved!
+              {t("profile.saved")}!
             </div>
           )}
         </div>
@@ -131,11 +134,11 @@ export default function ProfilePage() {
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
             <h2 className="text-white font-bold flex items-center gap-2">
               <User className="w-4 h-4 text-amber-400" />
-              Personal Information
+              {t("profile.personalInfo")}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className={labelClass}>Full Name</label>
+                <label className={labelClass}>{t("profile.fullName")}</label>
                 <input
                   value={form.name}
                   onChange={(e) =>
@@ -154,7 +157,7 @@ export default function ProfilePage() {
                 />
               </div>
               <div>
-                <label className={labelClass}>Phone</label>
+                <label className={labelClass}>{t("profile.phone")}</label>
                 <input
                   value={form.phone}
                   onChange={(e) =>
@@ -172,19 +175,19 @@ export default function ProfilePage() {
             <div className="flex items-center justify-between">
               <h2 className="text-white font-bold flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-amber-400" />
-                Saved Addresses
+                {t("profile.savedAddresses")}
               </h2>
               <button
                 onClick={addAddress}
                 className="flex items-center gap-1.5 text-amber-400 hover:text-amber-300 text-sm font-medium transition-colors"
               >
-                <Plus className="w-4 h-4" /> Add Address
+                <Plus className="w-4 h-4" /> {t("profile.addAddress")}
               </button>
             </div>
 
             {form.addresses.length === 0 && (
               <p className="text-slate-500 text-sm text-center py-4">
-                No addresses saved yet
+                {t("profile.noAddresses")}
               </p>
             )}
 
@@ -242,7 +245,7 @@ export default function ProfilePage() {
             className="w-full py-4 bg-amber-400 hover:bg-amber-300 disabled:opacity-60 text-slate-900 font-bold rounded-xl transition-colors flex items-center justify-center gap-2 text-lg"
           >
             {saving && <Loader2 className="w-5 h-5 animate-spin" />}
-            {saving ? "Saving..." : "Save Changes"}
+            {saving ? t("profile.saving") : t("profile.saveChanges")}
           </button>
         </div>
       </div>

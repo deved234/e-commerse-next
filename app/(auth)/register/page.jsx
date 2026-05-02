@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTranslation } from "@/lib/TranslationContext";
 import {
   Mail,
   Lock,
@@ -17,6 +18,7 @@ import {
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -52,7 +54,7 @@ export default function RegisterPage() {
     setLoading(false);
 
     if (!res.ok) {
-      setError(data.error || "Something went wrong");
+      setError(data.error || t("common.error"));
     } else {
       setSuccess(true);
     }
@@ -66,18 +68,17 @@ export default function RegisterPage() {
             <CheckCircle className="w-8 h-8 text-emerald-400" />
           </div>
           <h2 className="text-white font-bold text-xl mb-2">
-            Check your email!
+            {t("auth.checkEmail")}
           </h2>
           <p className="text-slate-400 text-sm">
-            We sent a verification link to{" "}
-            <span className="text-white">{form.email}</span>. Please verify your
-            email to activate your account.
+            {t("auth.verificationSent")}{" "}
+            <span className="text-white">{form.email}</span>
           </p>
           <Link
             href="/login"
             className="inline-block mt-6 px-6 py-3 bg-amber-400 text-slate-900 font-bold rounded-xl hover:bg-amber-300 transition-colors text-sm"
           >
-            Go to Sign In
+            {t("auth.goToSignIn")}
           </Link>
         </div>
       </div>
@@ -87,21 +88,21 @@ export default function RegisterPage() {
   const fields = [
     {
       key: "name",
-      label: "Full Name",
+      label: t("auth.fullName"),
       type: "text",
       icon: User,
       placeholder: "John Doe",
     },
     {
       key: "email",
-      label: "Email",
+      label: t("auth.email"),
       type: "email",
       icon: Mail,
       placeholder: "you@example.com",
     },
     {
       key: "phone",
-      label: "Phone (optional)",
+      label: t("auth.phone"),
       type: "tel",
       icon: Phone,
       placeholder: "+20 100 000 0000",
@@ -112,8 +113,10 @@ export default function RegisterPage() {
     <div className="w-full max-w-md">
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-white">Create account</h1>
-          <p className="text-slate-400 mt-1 text-sm">Join ShopZone today</p>
+          <h1 className="text-2xl font-bold text-white">
+            {t("auth.createAccount")}
+          </h1>
+          <p className="text-slate-400 mt-1 text-sm">{t("auth.joinDesc")}</p>
         </div>
 
         {error && (
@@ -143,11 +146,12 @@ export default function RegisterPage() {
             </div>
           ))}
 
-          {/* Password */}
           {["password", "confirmPassword"].map((key) => (
             <div key={key}>
               <label className="text-slate-300 text-sm font-medium block mb-1.5">
-                {key === "password" ? "Password" : "Confirm Password"}
+                {key === "password"
+                  ? t("auth.password")
+                  : t("auth.confirmPassword")}
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
@@ -183,17 +187,17 @@ export default function RegisterPage() {
             className="w-full py-3 bg-amber-400 hover:bg-amber-300 disabled:opacity-60 text-slate-900 font-bold rounded-xl transition-colors flex items-center justify-center gap-2 mt-2"
           >
             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-            {loading ? "Creating account..." : "Create Account"}
+            {loading ? t("auth.creating") : t("auth.createBtn")}
           </button>
         </form>
 
         <p className="text-center text-slate-400 text-sm mt-6">
-          Already have an account?{" "}
+          {t("auth.haveAccount")}{" "}
           <Link
             href="/login"
             className="text-amber-400 hover:text-amber-300 font-medium transition-colors"
           >
-            Sign in
+            {t("auth.signIn")}
           </Link>
         </p>
       </div>

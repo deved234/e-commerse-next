@@ -1,4 +1,5 @@
 "use client";
+import { useTranslation } from "@/lib/TranslationContext";
 
 import { useState, useEffect, useCallback } from "react";
 import ProductCard from "@/components/product/ProductCard";
@@ -22,6 +23,7 @@ const SORT_OPTIONS = [
 ];
 
 export default function ProductsPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -124,7 +126,7 @@ export default function ProductsPage() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                 <input
                   type="text"
-                  placeholder="Search products..."
+                  placeholder={t("common.search")}
                   value={filters.search}
                   onChange={(e) => updateFilter("search", e.target.value)}
                   className="w-full bg-slate-800 border border-slate-700 focus:border-amber-400 text-white placeholder-slate-500 rounded-xl py-2.5 pl-10 pr-4 outline-none transition-colors text-sm"
@@ -149,7 +151,7 @@ export default function ProductsPage() {
                 }`}
               >
                 <SlidersHorizontal className="w-4 h-4" />
-                Filters
+                {t("common.filters")}
                 {hasActiveFilters && (
                   <span className="w-4 h-4 bg-slate-900 text-amber-400 text-xs rounded-full flex items-center justify-center font-bold">
                     !
@@ -246,7 +248,7 @@ export default function ProductsPage() {
                     onClick={clearFilters}
                     className="flex items-center gap-1.5 text-rose-400 hover:text-rose-300 text-sm transition-colors"
                   >
-                    <X className="w-4 h-4" /> Clear All Filters
+                    <X className="w-4 h-4" /> {t("common.clearFilters")}
                   </button>
                 </div>
               )}
@@ -262,7 +264,7 @@ export default function ProductsPage() {
         ) : products.length === 0 ? (
           <EmptyState
             icon={Package}
-            title="No products found"
+            title={t("common.noProducts")}
             description="Try adjusting your filters or search query"
             action={
               <button
@@ -291,7 +293,7 @@ export default function ProductsPage() {
                   }
                   className="px-4 py-2 bg-slate-800 border border-slate-700 text-slate-300 rounded-xl text-sm disabled:opacity-40 hover:bg-slate-700 transition-colors"
                 >
-                  Previous
+                  {t("common.previous")}
                 </button>
 
                 {Array.from(
@@ -318,7 +320,7 @@ export default function ProductsPage() {
                   }
                   className="px-4 py-2 bg-slate-800 border border-slate-700 text-slate-300 rounded-xl text-sm disabled:opacity-40 hover:bg-slate-700 transition-colors"
                 >
-                  Next
+                  {t("common.next")}
                 </button>
               </div>
             )}

@@ -3,11 +3,7 @@ import { getToken } from "next-auth/jwt";
 
 export async function middleware(req) {
     const { pathname } = req.nextUrl;
-
-    const token = await getToken({
-        req,
-        secret: process.env.AUTH_SECRET
-    });
+    const token = await getToken({ req, secret: process.env.AUTH_SECRET });
 
     if (pathname.startsWith("/admin")) {
         if (!token || token.role !== "admin") {

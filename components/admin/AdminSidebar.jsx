@@ -11,7 +11,7 @@ import {
   Tag,
   LogOut,
   ShoppingBag,
-  Settings,
+  BadgePercent,
 } from "lucide-react";
 
 const NAV = [
@@ -20,6 +20,7 @@ const NAV = [
   { href: "/admin/products", label: "Products", icon: Package },
   { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
   { href: "/admin/categories", label: "Categories", icon: Tag },
+  { href: "/admin/promo", label: "Promo Codes", icon: BadgePercent },
 ];
 
 export default function AdminSidebar({ user }) {

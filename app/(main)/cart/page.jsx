@@ -1,5 +1,7 @@
 "use client";
+import { useTranslation } from "@/lib/TranslationContext";
 
+import { useState } from "react";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice } from "@/utils/formatPrice";
 import Image from "next/image";
@@ -11,30 +13,58 @@ import {
   Trash2,
   ArrowRight,
   Tag,
-  ChevronRight,
   Package,
 } from "lucide-react";
 import EmptyState from "@/components/shared/EmptyState";
 
 export default function CartPage() {
   const { items, removeItem, updateQuantity, subtotal, clearCart } = useCart();
+  const [promoCode, setPromoCode] = useState("");
+  const [promoData, setPromoData] = useState(null);
+  const [promoLoading, setPromoLoading] = useState(false);
+  const [promoError, setPromoError] = useState("");
 
   const shippingCost = subtotal > 500 ? 0 : 50;
-  const total = subtotal + shippingCost;
+  const discount = promoData?.discountAmount || 0;
+  const total = subtotal + shippingCost - discount;
+  const { t } = useTranslation();
+
+
+  const applyPromo = async () => {
+    if (!promoCode.trim()) return;
+    setPromoLoading(true);
+    setPromoError("");
+    setPromoData(null);
+
+    const res = await fetch("/api/promo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: promoCode, orderAmount: subtotal }),
+    });
+
+    const data = await res.json();
+    setPromoLoading(false);
+
+    if (!res.ok) {
+      setPromoError(data.error);
+    } else {
+      setPromoData(data);
+    }
+  };
 
   if (items.length === 0) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
         <EmptyState
           icon={ShoppingCart}
-          title="Your cart is empty"
+          title={t("cart.empty")}
           description="Add some products and come back!"
           action={
             <Link
               href="/products"
               className="px-6 py-3 bg-amber-400 text-slate-900 font-bold rounded-xl hover:bg-amber-300 transition-colors"
             >
-              Browse Products
+              {t("cart.browse")}
             </Link>
           }
         />
@@ -48,7 +78,7 @@ export default function CartPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-black">
-            Shopping Cart{" "}
+            {t("cart.title")}{" "}
             <span className="text-slate-500 font-normal text-xl">
               ({items.length} items)
             </span>
@@ -57,7 +87,7 @@ export default function CartPage() {
             onClick={clearCart}
             className="text-rose-400 hover:text-rose-300 text-sm transition-colors"
           >
-            Clear All
+            {t("cart.clearAll")}
           </button>
         </div>
 
@@ -69,7 +99,6 @@ export default function CartPage() {
                 key={item._id}
                 className="flex gap-4 bg-slate-900 border border-slate-800 rounded-2xl p-4"
               >
-                {/* Image */}
                 <Link
                   href={`/products/${item._id}`}
                   className="relative w-24 h-24 shrink-0 rounded-xl overflow-hidden bg-slate-800"
@@ -84,7 +113,6 @@ export default function CartPage() {
                   )}
                 </Link>
 
-                {/* Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
                     <div>
@@ -107,7 +135,6 @@ export default function CartPage() {
                   </div>
 
                   <div className="flex items-center justify-between mt-3">
-                    {/* Quantity */}
                     <div className="flex items-center gap-2 bg-slate-800 border border-slate-700 rounded-lg p-0.5">
                       <button
                         onClick={() =>
@@ -129,8 +156,6 @@ export default function CartPage() {
                         <Plus className="w-3 h-3" />
                       </button>
                     </div>
-
-                    {/* Price */}
                     <div className="text-right">
                       <p className="text-amber-400 font-bold">
                         {formatPrice(item.price * item.quantity)}
@@ -146,12 +171,11 @@ export default function CartPage() {
               </div>
             ))}
 
-            {/* Continue Shopping */}
             <Link
               href="/products"
               className="flex items-center gap-2 text-amber-400 hover:text-amber-300 text-sm transition-colors mt-2"
             >
-              ← Continue Shopping
+              ← {t("cart.continueShopping")}
             </Link>
           </div>
 
@@ -161,18 +185,36 @@ export default function CartPage() {
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
               <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
                 <Tag className="w-4 h-4 text-amber-400" />
-                Promo Code
+                {t("cart.promoCode")}
               </h3>
               <div className="flex gap-2">
                 <input
                   type="text"
-                  placeholder="Enter code"
+                  placeholder={t("cart.enterCode")}
+                  value={promoCode}
+                  onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
                   className="flex-1 bg-slate-800 border border-slate-700 focus:border-amber-400 text-white placeholder-slate-500 rounded-xl py-2.5 px-3 outline-none transition-colors text-sm"
                 />
-                <button className="px-4 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold rounded-xl transition-colors text-sm">
-                  Apply
+                <button
+                  onClick={applyPromo}
+                  disabled={promoLoading}
+                  className="px-4 py-2.5 bg-amber-400 hover:bg-amber-300 disabled:opacity-60 text-slate-900 font-bold rounded-xl transition-colors text-sm"
+                >
+                  {promoLoading ? "..." : t("cart.apply")}
                 </button>
               </div>
+              {promoError && (
+                <p className="text-rose-400 text-xs mt-2">{promoError}</p>
+              )}
+              {promoData && (
+                <p className="text-emerald-400 text-xs mt-2 font-medium">
+                  ✓{" "}
+                  {promoData.discountType === "percentage"
+                    ? `${promoData.discountValue}%`
+                    : `EGP ${promoData.discountValue}`}{" "}
+                  {t("cart.discount")}
+                </p>
+              )}
             </div>
 
             {/* Order Summary */}
@@ -181,12 +223,13 @@ export default function CartPage() {
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-400">
-                    Subtotal ({items.reduce((s, i) => s + i.quantity, 0)} items)
+                    {t("cart.subtotal")} (
+                    {items.reduce((s, i) => s + i.quantity, 0)} items)
                   </span>
                   <span className="text-white">{formatPrice(subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-400">Shipping</span>
+                  <span className="text-slate-400">{t("cart.shipping")}</span>
                   <span
                     className={
                       shippingCost === 0
@@ -194,7 +237,7 @@ export default function CartPage() {
                         : "text-white"
                     }
                   >
-                    {shippingCost === 0 ? "FREE" : formatPrice(shippingCost)}
+                    {shippingCost === 0 ? "{t("cart.free")}" : formatPrice(shippingCost)}
                   </span>
                 </div>
                 {shippingCost > 0 && (
@@ -202,8 +245,16 @@ export default function CartPage() {
                     Add {formatPrice(500 - subtotal)} more for free shipping
                   </p>
                 )}
+                {discount > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-emerald-400">{t("cart.discount")}</span>
+                    <span className="text-emerald-400">
+                      -{formatPrice(discount)}
+                    </span>
+                  </div>
+                )}
                 <div className="border-t border-slate-800 pt-3 flex justify-between">
-                  <span className="text-white font-bold">Total</span>
+                  <span className="text-white font-bold">{t("cart.total")}</span>
                   <span className="text-amber-400 font-black text-xl">
                     {formatPrice(total)}
                   </span>
@@ -214,7 +265,7 @@ export default function CartPage() {
                 href="/checkout"
                 className="flex items-center justify-center gap-2 w-full mt-5 py-3.5 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold rounded-xl transition-all hover:shadow-lg hover:shadow-amber-400/20"
               >
-                Proceed to Checkout <ArrowRight className="w-4 h-4" />
+               {t("cart.checkout")} <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
 
