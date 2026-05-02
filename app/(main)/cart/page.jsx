@@ -237,24 +237,31 @@ export default function CartPage() {
                         : "text-white"
                     }
                   >
-                    {shippingCost === 0 ? "{t("cart.free")}" : formatPrice(shippingCost)}
+                    {shippingCost === 0
+                      ? ` ${t("cart.free")}`
+                      : formatPrice(shippingCost)}
                   </span>
                 </div>
                 {shippingCost > 0 && (
                   <p className="text-slate-500 text-xs">
-                    Add {formatPrice(500 - subtotal)} more for free shipping
+                    Add {formatPrice(500 - subtotal)} more for {t("cart.free")}{" "}
+                    shipping
                   </p>
                 )}
                 {discount > 0 && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-emerald-400">{t("cart.discount")}</span>
+                    <span className="text-emerald-400">
+                      {t("cart.discount")}
+                    </span>
                     <span className="text-emerald-400">
                       -{formatPrice(discount)}
                     </span>
                   </div>
                 )}
                 <div className="border-t border-slate-800 pt-3 flex justify-between">
-                  <span className="text-white font-bold">{t("cart.total")}</span>
+                  <span className="text-white font-bold">
+                    {t("cart.total")}
+                  </span>
                   <span className="text-amber-400 font-black text-xl">
                     {formatPrice(total)}
                   </span>
@@ -265,7 +272,7 @@ export default function CartPage() {
                 href="/checkout"
                 className="flex items-center justify-center gap-2 w-full mt-5 py-3.5 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold rounded-xl transition-all hover:shadow-lg hover:shadow-amber-400/20"
               >
-               {t("cart.checkout")} <ArrowRight className="w-4 h-4" />
+                {t("cart.checkout")} <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
 
