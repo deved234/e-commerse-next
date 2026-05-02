@@ -12,10 +12,11 @@ import { Shield, Truck, RefreshCw, Package } from "lucide-react";
 async function getProduct(id) {
   await connectDB();
   try {
-    return await Product.findById(id)
+    const product = await Product.findById(id)
       .populate("category", "name slug")
       .populate("seller", "name")
       .lean();
+    return JSON.parse(JSON.stringify(product));
   } catch {
     return null;
   }
@@ -23,16 +24,17 @@ async function getProduct(id) {
 
 async function getReviews(productId) {
   await connectDB();
-  return Review.find({ product: productId })
+  const reviews = await Review.find({ product: productId })
     .populate("user", "name avatar")
     .sort({ createdAt: -1 })
     .limit(10)
     .lean();
+  return JSON.parse(JSON.stringify(reviews));
 }
 
 async function getRelated(product) {
   await connectDB();
-  return Product.find({
+  const related = await Product.find({
     category: product.category._id,
     _id: { $ne: product._id },
     isActive: true,
@@ -40,6 +42,7 @@ async function getRelated(product) {
     .populate("category", "name slug")
     .limit(4)
     .lean();
+  return JSON.parse(JSON.stringify(related));
 }
 
 export async function generateMetadata({ params }) {

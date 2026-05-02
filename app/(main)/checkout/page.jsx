@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCart } from "@/hooks/useCart";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -11,9 +11,6 @@ import {
   Wallet,
   DollarSign,
   MapPin,
-  User,
-  Mail,
-  Phone,
   CheckCircle,
   Loader2,
 } from "lucide-react";
@@ -44,12 +41,13 @@ export default function CheckoutPage() {
   const shippingCost = subtotal > 500 ? 0 : 50;
   const total = subtotal + shippingCost;
 
-  const [step, setStep] = useState(1); // 1: Info, 2: Payment, 3: Review
+  const [mounted, setMounted] = useState(false);
+  const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("cash_on_delivery");
   const [form, setForm] = useState({
-    name: session?.user?.name || "",
-    email: session?.user?.email || "",
+    name: "",
+    email: "",
     phone: "",
     street: "",
     city: "",
@@ -58,6 +56,23 @@ export default function CheckoutPage() {
     country: "Egypt",
     notes: "",
   });
+
+  useEffect(() => {
+    setMounted(true);
+    if (session?.user) {
+      setForm((p) => ({
+        ...p,
+        name: session.user.name || "",
+        email: session.user.email || "",
+      }));
+    }
+  }, [session]);
+
+  useEffect(() => {
+    if (mounted && items.length === 0) {
+      router.push("/cart");
+    }
+  }, [mounted, items.length, router]);
 
   const updateForm = (key, val) => setForm((p) => ({ ...p, [key]: val }));
 
@@ -81,10 +96,8 @@ export default function CheckoutPage() {
           notes: form.notes,
         }),
       });
-
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
-
       clearCart();
       router.push(`/orders/${data.order._id}?success=true`);
     } catch (err) {
@@ -94,16 +107,18 @@ export default function CheckoutPage() {
     }
   };
 
-  if (items.length === 0) {
-    router.push("/cart");
-    return null;
-  }
-
   const inputClass =
     "w-full bg-slate-800 border border-slate-700 focus:border-amber-400 text-white placeholder-slate-500 rounded-xl py-3 px-4 outline-none transition-colors text-sm";
-
   const labelClass =
     "text-slate-400 text-xs font-medium uppercase tracking-wider block mb-1.5";
+
+  if (!mounted || items.length === 0) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-slate-700 border-t-amber-400 rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
@@ -131,9 +146,7 @@ export default function CheckoutPage() {
                     {done ? <CheckCircle className="w-4 h-4" /> : num}
                   </div>
                   <span
-                    className={`text-sm font-medium hidden sm:block ${
-                      active ? "text-white" : "text-slate-500"
-                    }`}
+                    className={`text-sm font-medium hidden sm:block ${active ? "text-white" : "text-slate-500"}`}
                   >
                     {s}
                   </span>
@@ -147,90 +160,77 @@ export default function CheckoutPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left - Steps */}
           <div className="lg:col-span-2">
-            {/* Step 1: Shipping */}
+            {/* Step 1 */}
             {step === 1 && (
               <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-5">
                 <h2 className="text-xl font-bold flex items-center gap-2">
-                  <MapPin className="w-5 h-5 text-amber-400" />
-                  Shipping Information
+                  <MapPin className="w-5 h-5 text-amber-400" /> Shipping
+                  Information
                 </h2>
-
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className={labelClass}>Full Name</label>
-                    <input
-                      value={form.name}
-                      onChange={(e) => updateForm("name", e.target.value)}
-                      placeholder="John Doe"
-                      className={inputClass}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelClass}>Email</label>
-                    <input
-                      type="email"
-                      value={form.email}
-                      onChange={(e) => updateForm("email", e.target.value)}
-                      placeholder="you@example.com"
-                      className={inputClass}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelClass}>Phone</label>
-                    <input
-                      value={form.phone}
-                      onChange={(e) => updateForm("phone", e.target.value)}
-                      placeholder="+20 100 000 0000"
-                      className={inputClass}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelClass}>Country</label>
-                    <input
-                      value={form.country}
-                      onChange={(e) => updateForm("country", e.target.value)}
-                      placeholder="Egypt"
-                      className={inputClass}
-                    />
-                  </div>
-                  <div className="sm:col-span-2">
-                    <label className={labelClass}>Street Address</label>
-                    <input
-                      value={form.street}
-                      onChange={(e) => updateForm("street", e.target.value)}
-                      placeholder="123 Main St, Apt 4B"
-                      className={inputClass}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelClass}>City</label>
-                    <input
-                      value={form.city}
-                      onChange={(e) => updateForm("city", e.target.value)}
-                      placeholder="Cairo"
-                      className={inputClass}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelClass}>State / Governorate</label>
-                    <input
-                      value={form.state}
-                      onChange={(e) => updateForm("state", e.target.value)}
-                      placeholder="Cairo"
-                      className={inputClass}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelClass}>ZIP Code</label>
-                    <input
-                      value={form.zipCode}
-                      onChange={(e) => updateForm("zipCode", e.target.value)}
-                      placeholder="11511"
-                      className={inputClass}
-                    />
-                  </div>
+                  {[
+                    {
+                      key: "name",
+                      label: "Full Name",
+                      placeholder: "John Doe",
+                      span: false,
+                    },
+                    {
+                      key: "email",
+                      label: "Email",
+                      placeholder: "you@example.com",
+                      span: false,
+                      type: "email",
+                    },
+                    {
+                      key: "phone",
+                      label: "Phone",
+                      placeholder: "+20 100 000 0000",
+                      span: false,
+                    },
+                    {
+                      key: "country",
+                      label: "Country",
+                      placeholder: "Egypt",
+                      span: false,
+                    },
+                    {
+                      key: "street",
+                      label: "Street Address",
+                      placeholder: "123 Main St",
+                      span: true,
+                    },
+                    {
+                      key: "city",
+                      label: "City",
+                      placeholder: "Cairo",
+                      span: false,
+                    },
+                    {
+                      key: "state",
+                      label: "State/Governorate",
+                      placeholder: "Cairo",
+                      span: false,
+                    },
+                    {
+                      key: "zipCode",
+                      label: "ZIP Code",
+                      placeholder: "11511",
+                      span: false,
+                    },
+                  ].map(({ key, label, placeholder, span, type }) => (
+                    <div key={key} className={span ? "sm:col-span-2" : ""}>
+                      <label className={labelClass}>{label}</label>
+                      <input
+                        type={type || "text"}
+                        value={form[key]}
+                        onChange={(e) => updateForm(key, e.target.value)}
+                        placeholder={placeholder}
+                        className={inputClass}
+                      />
+                    </div>
+                  ))}
                   <div className="sm:col-span-2">
                     <label className={labelClass}>Order Notes (optional)</label>
                     <textarea
@@ -242,7 +242,6 @@ export default function CheckoutPage() {
                     />
                   </div>
                 </div>
-
                 <button
                   onClick={() => setStep(2)}
                   disabled={
@@ -255,14 +254,13 @@ export default function CheckoutPage() {
               </div>
             )}
 
-            {/* Step 2: Payment */}
+            {/* Step 2 */}
             {step === 2 && (
               <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-5">
                 <h2 className="text-xl font-bold flex items-center gap-2">
-                  <CreditCard className="w-5 h-5 text-amber-400" />
-                  Payment Method
+                  <CreditCard className="w-5 h-5 text-amber-400" /> Payment
+                  Method
                 </h2>
-
                 <div className="space-y-3">
                   {PAYMENT_METHODS.map((method) => {
                     const Icon = method.icon;
@@ -303,15 +301,11 @@ export default function CheckoutPage() {
                     );
                   })}
                 </div>
-
-                {/* Card fields placeholder */}
                 {paymentMethod === "stripe" && (
                   <div className="p-4 bg-slate-800 border border-slate-700 rounded-xl text-slate-400 text-sm">
-                    💳 Stripe card form will be integrated here using{" "}
-                    <code>@stripe/react-stripe-js</code>
+                    💳 Stripe card form will be integrated here
                   </div>
                 )}
-
                 <div className="flex gap-3">
                   <button
                     onClick={() => setStep(1)}
@@ -329,12 +323,10 @@ export default function CheckoutPage() {
               </div>
             )}
 
-            {/* Step 3: Review */}
+            {/* Step 3 */}
             {step === 3 && (
               <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-5">
                 <h2 className="text-xl font-bold">Review Your Order</h2>
-
-                {/* Shipping Summary */}
                 <div className="bg-slate-800/50 rounded-xl p-4 space-y-1">
                   <p className="text-amber-400 text-xs font-semibold uppercase tracking-wider mb-2">
                     Shipping To
@@ -347,8 +339,6 @@ export default function CheckoutPage() {
                     {form.street}, {form.city}, {form.country}
                   </p>
                 </div>
-
-                {/* Payment Summary */}
                 <div className="bg-slate-800/50 rounded-xl p-4">
                   <p className="text-amber-400 text-xs font-semibold uppercase tracking-wider mb-2">
                     Payment
@@ -357,8 +347,6 @@ export default function CheckoutPage() {
                     {paymentMethod.replace(/_/g, " ")}
                   </p>
                 </div>
-
-                {/* Items */}
                 <div className="space-y-3">
                   <p className="text-amber-400 text-xs font-semibold uppercase tracking-wider">
                     Items
@@ -389,7 +377,6 @@ export default function CheckoutPage() {
                     </div>
                   ))}
                 </div>
-
                 <div className="flex gap-3 pt-2">
                   <button
                     onClick={() => setStep(2)}
@@ -410,7 +397,7 @@ export default function CheckoutPage() {
             )}
           </div>
 
-          {/* Right - Summary */}
+          {/* Summary */}
           <div>
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sticky top-20">
               <h3 className="text-white font-semibold mb-4">Order Summary</h3>
