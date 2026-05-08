@@ -137,6 +137,12 @@ export default async function HomePage() {
             <div className="hidden lg:block relative h-[500px]">
               <div className="absolute top-8 right-8 w-56 bg-slate-800/80 backdrop-blur border border-slate-700 rounded-2xl p-4 shadow-xl">
                 <div className="w-full h-32 bg-slate-700 rounded-xl mb-3 overflow-hidden relative">
+                  <Image
+                    src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e"
+                    alt="Premium Headphones"
+                    className="w-full h-full object-cover"
+                    fill
+                  />
                   <div className="absolute inset-0 bg-gradient-to-br from-amber-400/20 to-transparent" />
                 </div>
                 <p className="text-white font-semibold text-sm">
